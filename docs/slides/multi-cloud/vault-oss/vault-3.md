@@ -3,7 +3,7 @@ class: title, shelf, no-footer, fullbleed
 background-image: url(https://hashicorp.github.io/field-workshops-assets/assets/bkgs/HashiCorp-Title-bkg.jpeg)
 count: false
 
-# Chapter 3      
+# Chapter 3
 ## Running a Production Vault Server
 
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_vault.png)
@@ -30,7 +30,11 @@ name: vault-production-serves
   * Unseal the Vault server with the unseal keys.
 
 ???
-* Describe the steps to run a production Vault server.
+* Running a production Vault server requires additional steps
+* Provide configuration file when starting vault
+* Vault will start in sealed mode
+  * Requires unseal key/keys like shamir, cloud KMS, HSM(Ent)
+  * Once unsealed it can decrypt the backend storage, load cfg, and be useable
 
 ---
 name: configuring-vault
@@ -46,7 +50,8 @@ name: configuring-vault
   * cluster_addr
 
 ???
-* Discuss Vault configuration files and common settings.
+Here are some common attributes you'll find in your vault servers configuration
+* We only need to set a few of these and when we go through the lab we will configure them.
 
 ---
 name: running-vault
@@ -55,7 +60,13 @@ name: running-vault
 * But, you do not use the `-dev` option.
 
 ???
-* Describe the command to run a Vault production server.
+We use the same vault go binary to start the vault server as we do for the CLI.
+
+We are just going to pass it different options.
+
+```
+vault server -config=/vault/config/vault-config.hcl
+```
 
 ---
 name: initializing-vault
@@ -67,7 +78,10 @@ name: initializing-vault
 * The command returns the unseal keys and the initial root token for the cluster.
 
 ???
-* Describe Vault's `init` command
+To start vault you need the unseal key and a root token to do the initial configuraiton but initially we dont have any of this.
+* First time you start a vault server (1 standalone or n cluster)
+* initialize it with `vault operator init`
+* During init you will get your unseal keys and root key
 
 ---
 name: unsealing-vault
@@ -77,7 +91,9 @@ name: unsealing-vault
 * This is done with the `vault operator unseal` command, using the unseal keys returned when you initialized the cluster.
 
 ???
-* Describe Vault's `unseal` command.
+Everytime a server starts
+* its in a **sealed state** and must be **unsealed** before its usable
+* This is true for every server in a cluster
 
 ---
 name: vault-status-command
@@ -90,7 +106,14 @@ name: vault-status-command
   * whether the server is running as a performance standby.
 
 ???
-Describe the `vault status` command
+* **vault status** was one of the first commands I learned.
+* Not only does it tell you if the server is sealed.
+* But it tells you right away if you can't connnect to it.
+* this usually means you need to set your env variables correctly.
+`VAULT_ADDR=http://localhost:8200`
+
+It also tells you useful information on
+* Version,  HA Mode,  Key Shares / Threshold
 
 ---
 name: chapter-3-review-questions

@@ -3,14 +3,14 @@ class: title, shelf, no-footer, fullbleed
 background-image: url(https://hashicorp.github.io/field-workshops-assets/assets/bkgs/HashiCorp-Title-bkg.jpeg)
 count: false
 
-# Chapter 8    
-## Encryption as a Service
+# Chapter 8
+## SSH Secrets Engine
 
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_vault.png)
 
 ???
 
-* Chapter 8 introduces Vault's Transit secrets engine which functions as Vault's Encryption-as-a-Service (EaaS).
+* Chapter 8 introduces Vault's SSH Secrets Engine.
 
 ---
 layout: true
@@ -21,183 +21,109 @@ layout: true
 ]
 
 ---
-name: Vault-Transit-Engine
+name: Vault-SSH-Engine
 
-# Vault Transit Engine - Encryption as a Service
-.center[![:scale 80%](images/vault-eaas.webp)]
+# Vault SSH Engine - Certificate Signing
+.center[![:scale 60%](images/ssh_workflow.png)]
 
-* Vault's Transit Secrets Engine functions as an Encryption-as-a-Service.
-* Developers use it to encrypt and decrypt data stored outside of Vault.
-
-???
-* Let's talk about Vault's Encryption-as-a-Service, the Transit secrets engine.
-* It provides an encryption API & service that are secure, accessible and easy to implement.
-* Instead of forcing developers to learn cryptography, we present them with a familiar API that can be used to encrypt and decrypt data that is stored outside of Vault.
-
----
-name: transit-engine-benefits
-# Transit Engine Benefits
-
-* Vault's Transit Engine provides developers a well-architected EaaS API so that they don't have to become encryption or cryptography experts.
-* It provides centralized key management.
-* It ensures that only approved ciphers and algorithms are used.
-* It supports automated key rotation and re-wrapping.
-* If an attacker manages to get access to the encrypted data, they will only see ciphertext that is useless without Vault.
+* Manage the creation and authentication of SSH/TLS certificates
+* Allow Vault to serve as a root or intermediate certificate authority
 
 ???
-* There are seveal benefits of using the Transit engine.
+* There are two types of SSH engines within Vault
+* The first we'll discuss is the certificate signing workflow
+* Users will pass their local SSH keys to Vault to be signed
+* Vault then returns a signed copy of that key
+* Users can then use that key to access any machine configured to trust Vault as a CA
 
 ---
-name: Vault-Transit-Engine-1
-# Vault Transit - Example Application
+name: Vault-OTP-Engine
 
-* In the next lab we'll use a web application that uses the Transit engine to encrypt and decrypt data.
-* The app will store its encrypted data in the same MySQL database we used in Chapter 7.
-* It will also get MySQL credentials from the Database secrets engine we configured in that chapter's lab.
-* We'll first run the web app without Vault: No records are encrypted.
-* We'll then run it with Vault enabled and see that new records are encrypted.
+# Vault SSH Engine - One-Time Password (OTP)
+.center[![:scale 80%](images/ssh_otp_workflow.png)]
+
+* Create a single use password to access machines
+* Install the SSH helper on target machines
 
 ???
-* Discuss the web app we will be using in this chapter's lab.
-* Point out that it will use the same MySQL database from chapter 7.
-* Point out that it will get its MySQL credentials from the Database secrets engine students set up in chapter 7.
-* Indicate that we will first run without Vault and then with it.
+* The other option in Vault for SSH access is the One-Time Password engine
+* It's a similar workflow as the previous example, but users will generate a single use password to gain access to target machines
+* There is an SSH helper installed on the target machines that will validate the OTP and mark it as used
+* This allows much more granularity when it comes to auditing because every login there is a call back to Vault which will show up in your audit logs, unlike the certificate signing where Vault is unaware when the signed key is used
+* It also helps ensure that there are no longer lived keys out in the wild and you can specify short TTLs to the OTPs
 
 ---
-name: web-app-screenshot
-# The Web App
-### Here is a screenshot of the Python web app:
+name: Vault-SSH-Engine-1
+# Vault SSH - Example Application
 
-.center[![:scale 70%](images/transit_app.png)]
+* In the next lab we'll use Vault's SSH engine to sign a local key.
+* We'll use that signed key to SSH into a target instance.
+* We'll also use Vault's SSH OTP engine to generate a single use password.
+* Then we will use that OTP to log into a target instance.
 
 ???
-* Show the screenshot of the web app.
+* In this lab we will be using Vault's SSH engines in an example scenario.
 
 ---
-name: web-app-views
-# The Web App's Views
-###There are two main sections in the application.
-1. **Records View**
-  * The Records View displays records in plain text, showing what a logged in user would see after any encrypted data is decrypted.
-
-1. **Database View**
-  * The Database View displays the raw records in the database, showing what SQL commands would return:
-
----
-name: records-view
-# The Web App's Records View
-.center[![:scale 90%](images/records_view.png)]
-
-* As we would expect an authorized user is able to see some of the sensitive data because the app has decrypted any encrypted data.
-
-???
-* Show the records view of the web app.
-
----
-name: Vault-Transit-Engine-6
-# The Add User Screen
-* In the lab, you will add new users to the database.
-.center[![:scale 60%](images/add_user.png)]
-
-???
-* Describe the Add User screen that students will use to add new records to the database.
-* Point out again that when Vault is enabled, the records will be encrypted in the database.
-
----
-name: database-record-without-vault
-# Record in Database View Without Vault Enabled
-* After adding a record in the lab, you will be instructed to click on the  **Database View** menu.
-* You should see the exact same data that you entered.
-* This means that Personally Identifiable Data (PII) is being stored in plain text in our database records.
-* How can we improve this? Let's enable Vault's Transit engine and see.
-
----
-name: encrypted-record
-# A Database Record Encrypted by Vault
-#### Here is a record that was encrypted by Vault's Transit engine.
-.center[![:scale 80%](images/database_view_with_encrypted_record.png)]
-* Note that the birth_date and social_security_number are encrypted.
-???
-* Show a record from the database encrypted by Vault's Transit engine.
-* Point out that the birth_date and social_security_number field are encrypted as indicated by their starting with "vault:v1".
-* Point out that the "v1" indicates that the first version of the encryption key was used.
-
----
-name: encryption-key-rotation
-# Rotating Transit Engine Encryption Keys
-* The encryption keys of Vaults Transit Engine can be rotated.
-* The newest version of the key is used to encrypt new data
-* Older versions of the key can still decrypt old data but cannot decrypt new data.
-* When we rotate the encryption keys, apps that use the Transit engine are unaware of any changes.
-* Data can also be re-encrypted using the `rewrap` endpoint.
-
----
-name: lab-transit-challenge-1
-# 👩‍💻 Challenge 1: Enable the Transit Engine
-* In this lab challenge, you'll enable the Transit engine.
-* You'll do this in the [Vault Encryption as a Service](https://play.instruqt.com/hashicorp/invite/qleasfx1dszc) Instruqt track.
+name: lab-ssh-challenge-1
+# 👩‍💻 Challenge 1: Enable the SSH Engine
+* In this lab challenge, you'll enable the SSH engine.
+* You'll do this in the [Vault SSH Engine](https://play.instruqt.com/hashicorp/invite/qleasfx1dszc) Instruqt track.
 * Instructions:
-  * Click the "Enable the Transit Secrets Engine" challenge of the "Vault Encryption as a Service" track.
+  * Click the "Enable the SSH Engine" challenge of the "Vault SSH Engine" track.
   * Then click the green "Start" button.
   * Follow the challenge's instructions.
   * Click the green "Check" button when finished.
 
 ???
-* Instruct the students to do the "Enable the Transit Secrets Engine" challenge of the "Vault Encryption as a Service" track.
-* This challenge has them enable the Transit secrets engine on the path "lob_a/workshop/transit".
+And this brings us to our next Lab:  "Vault SSH Secrets Engine"
+* We will Enable the SSH Engine
+* path "lob_a/workshop/ssh".
 
 ---
-name: lab-database-challenge-2
-# 👩‍💻 Challenge 2: Create an Encryption Key
-* In this lab, you'll create an encryption key for use with the Transit engine you enabled in the previous challenge.
+name: lab-ssh-challenge-2
+# 👩‍💻 Challenge 2: Sign Key with SSH Engine and SSH to Target
+* In this lab, you'll use Vault to sign a key with the SSH engine you enabled in the previous challenge and SSH into a target machine.
 * Instructions:
-  * If the track does not do it for you, click the "Create a Key for the Transit Secrets Engine" challenge of the "Vault Encryption as a Service" track.
+  * If the track does not do it for you, click the "Sign Key with SSH Engine" challenge of the "Vault SSH Engine" track.
   * Then click the green "Start" button.
   * Follow the challenge's instructions.
   * Click the green "Check" button when finished.
 
 ???
-* Instruct the students to do the "Create a Key for the Transit Secrets Engine" challenge of the "Vault Encryption as a Service" track.
-* This challenge has them create an encryption key for use with the Transit engine they enabled in the previous challenge.
+* We'll sign a key with the SSH Engine and SSH into the target machine
 
 ---
-name: lab-database-challenge-3
-# 👩‍💻 Challenge 3: Use the Web App Without Vault
-* In this lab, you'll use the web application without Vault.
+name: lab-ssh-challenge-3
+# 👩‍💻 Challenge 3: Enable the SSH OTP Engine
+* In this lab challenge, you'll enable the SSH OTP engine.
 * Instructions:
-  * If the track does not do it for you, click the "Use the Web App Without Vault" challenge of the "Vault Encryption as a Service" track.
+  * If the track does not do it for you, click the "Enable the SSH OTP Engine" challenge of the "Vault SSH Engine" track.
   * Then click the green "Start" button.
   * Follow the challenge's instructions.
   * Click the green "Check" button when finished.
 
 ???
-* Instruct the students to do the "Use the Web App Without Vault" challenge of the "Vault Encryption as a Service" track.
-* This challenge has them use the web application without Vault.
-* Point out that the new record they add during this challenge will nto be encrypted.
+We will enable the SSH OTP Engine.
 
 ---
-name: lab-database-challenge-4
-# 👩‍💻 Challenge 4: Use the Web App With Vault
-* In this lab, you'll use the web application with Vault.
-* You'll also rotate the encryption key.
+name: lab-ssh-challenge-4
+# 👩‍💻 Challenge 4: SSH Using SSH OTP
+* In this lab, we'll use the OTP generated in the previous step to SSH into a target instance.
 * Instructions:
-  * If the track does not do it for you, click the "Use the Web App With Vault" challenge of the "Vault Encryption as a Service" track.
+  * If the track does not do it for you, click the "SSH Using SSH OTP" challenge of the "Vault SSH Engine" track.
   * Then click the green "Start" button.
   * Follow the challenge's instructions.
   * Click the green "Check" button when finished.
 
 ???
-* Instruct the students to do the "Use the Web App With Vault" challenge of the "Vault Encryption as a Service" track.
-* This challenge has them use the web application with Vault.
-* Point out that the new record they add will have sensitive fields encrypted by Vault's Transit engine.
+Then we'll SSH into a machine using the OTP.
 
 ---
 name: chapter-8-review-questions
 # 📝 Chapter 8 Review
-* What is the main advantage of using Vault's Transit secrets engine?
-* Where does Vault's Transit Engine store encrypted data?
-* Was the application still able to decrypt older encrypted records after you rotated the encryption key?
-* Is it possible to tell which version of an encryption key was used?
+* What is the main advantage of using Vault's SSH engine?
+* What are some advantages and disadvantages of Certificate Signing vs One-Time Password?
 
 ???
 * Let's review what we learned in this chapter.
@@ -205,38 +131,12 @@ name: chapter-8-review-questions
 ---
 name: chapter-8-review-answers
 # 📝 Chapter 8 Review
-* What is the main advantage of using Vault's Transit secrets engine?
-  * Developers can encrypt data without being experts in cryptography.
-* Where does Vault's Transit Engine store encrypted data?
-  * Wherever developers want, but outside of Vault
-* Was the application still able to decrypt older encrypted records after you rotated the encryption key?
-  * Yes
-* Is it possible to tell which version of an encryption key was used?
-  * Yes. The version is indicated by `v1`, `v2`, etc.
+* What is the main advantage of using Vault's SSH engine?
+  * Allows you to have short lived SSH credentials preventing long lived SSH keys
+* What are some advantages and disadvantages of Certificate Signing vs One-Time Password?
+  * Certificate signing can use the built in OpenSSH functionality without the need to install Vault SSH-Helper
+  * OTP gives insight when passwords are being used in Vault's audit logs
+  * OTP are a single use password and therfore more secure
 
 ???
 * Here are the answers to the review questions.
-
----
-name: conclusion
-# Thank You for Participating!
-.center[![:scale 40%](images/vault_logo.png)]
-
-### For more information please refer to the following links:
-* https://www.vaultproject.io/docs/
-* https://www.vaultproject.io/api/
-* https://learn.hashicorp.com/vault
-
-???
-* Thank the students for their participation
-* Share some Vault links
-
----
-name: Feedback-Survey
-# Workshop Feedback Survey
-* Your feedback is important to us!
-* The survey is short, we promise:
-  * http://bit.ly/hashiworkshopfeedback
-
-???
-* Ask them to fill out the online survey

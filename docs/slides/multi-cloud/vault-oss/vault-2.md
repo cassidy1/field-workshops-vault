@@ -5,13 +5,13 @@ count: false
 
 
 
-# Chapter 2      
+# Chapter 2
 ## Interacting With Vault
 
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_vault.png)
 
 ???
-Chapter 2 focuses on interacting with Vault
+How do we interact with Vault?
 
 ---
 layout: true
@@ -31,8 +31,9 @@ Vault provides several mechanisms for interacting with it:
 * The Vault [API](https://www.vaultproject.io/api-docs/index/)
 
 ???
-
-* Chapter 2 focuses on interacting with Vault
+* CLI
+* Web UI
+* Rest API
 
 ---
 name: Vault-CLI
@@ -42,7 +43,7 @@ name: Vault-CLI
 * You can download the latest version [here](https://www.vaultproject.io/downloads/).
 
 ???
-* The Vault CLI is distributed as a Go binary.
+* The Vault CLI is distributed as a single static Go binary.
 * It runs on multiple operating systems.
 
 ---
@@ -93,8 +94,11 @@ name: vault-dev-server
 **Please never store actual secrets on a server run in "Dev" mode.**
 
 ???
-* Discuss limitations of Vault's "Dev" mode.
-* Warn students to never store real secrets on a Dev server.
+* "Dev" mode is a really nice feature to have.
+  * Everything runs in memory.  Nothings persistant.  No backend configuration
+  * Great for Dev.  Its very fast to start and test with.
+  * Not Secure:  Never store real secrets on a Dev server.
+  * The root token is available in your logs, shell history, env
 
 ---
 name: Vault-UI
@@ -107,14 +111,20 @@ name: Vault-UI
 ???
 
 * Let's talk about the Vault UI a bit, including ways of signing into it.
-* While you used the token "root" in the last challenge, you'll be running a Vault server in "Prod"  mode in the rest of the track and will have to use the token generated when you initialize that server in the next challenge.
+* In the first lab you will run vault in dev mode
+  * where you will define a token with the value of "root" to sign in.
+* Next you'll be running a Vault server in "Prod" mode.
+  * We will do this for the rest of the track and will have to use the token generated for uswhen you initialize that server in the next challenge.
+* The root token is like the root user in unix.
+  * It has a root policy associated to it that allows you to define any new policy, secrets engine, or authentication method.
+
 ---
 name: signing-into-the-vault-ui
 # Signing into the Vault UI
 .center[![:scale 70%](images/vault_login_page.png)]
 
 ???
-* This slide shows a screenshot of the login dialog for the Vault server.
+* This is what you're going to see.
 
 ---
 name: welcome-to-vault
@@ -139,7 +149,7 @@ Command:
 curl http://localhost:8200/v1/sys/health | jq
 ```
 ???
-* Let's talk about the Vault HTTP API
+* Everythig uses Vaults Restful API.  The CLI and UI just make API calls.
 
 ---
 name: vault-api-2
@@ -172,7 +182,11 @@ name: vault-api-3
 * This is done with a Vault token that is provided with the `X-Vault-Token` header.
 
 ???
-* Talk about how most Vault HTTP API calls will require authentication with a Vault token.
+* Most Vault HTTP API calls require authentication with a Vault token.
+
+* But you may have noticed the healthcheck endpoint sys/health didn't.
+  * If vault is unhealthy you want to be able to check its health.
+  * This is used by LB to efficiently route traffic.
 
 ---
 name: chapter-2-review-questions

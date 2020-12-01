@@ -3,7 +3,7 @@ class: title, shelf, no-footer, fullbleed
 background-image: url(https://hashicorp.github.io/field-workshops-assets/assets/bkgs/HashiCorp-Title-bkg.jpeg)
 count: false
 
-# Chapter 6      
+# Chapter 6
 ## Vault Policies
 
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_vault.png)
@@ -28,6 +28,12 @@ name: vault-policies
 * Vault administrators must explicity grant users and applications access to specific paths with policy statements.
 * In addition to specifying paths, policies also specify a set of capabilities for those paths.
 * Policies are written in HashiCorp Configuration Language (HCL).
+
+???
+Vault Polices is the last chapter before our next lab.
+* Polices are really tying together authentication with the secrets engines
+* User/App - Authenticate - Mapped to a policy that allows **capabilities** for defined **paths**
+* Capabilities: Read, Write, List, Delete
 
 ---
 name: vault-policy-example
@@ -70,8 +76,11 @@ path "lob_a/dept_1/*" {
 * This policy grants all standard capabilities to all secrets mounted under `lob_a/dept_1/` by using the glob character (`*`).
 
 ???
-* Talk about how many organizations organize Vault secrets by line of business and department.
-* Explain the policy including the glob character and that it can only be used at the end of a path.
+* Vault is very path based.  Like a unix file system.
+* So when your designing your vault structure it often reflects your organization's structure
+* This can be by line of business, department, team, or even partner or customer.
+* Explain Example
+* Note: the glob character can only be used at the end of a path.
 
 ---
 name: vault-policy-commands

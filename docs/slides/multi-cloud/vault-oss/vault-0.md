@@ -9,9 +9,9 @@ count: false
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_vault.png)
 
 ???
-This workshop introduces students to the open-source version of Vault.
+Welcome to the Vault workshop.
 
-It is cloud agnostic.
+Usually one of the first questions I get is, can I have a copy of the slides? And Yes! You can use this link to follow along which will be available after the workshop. I'll paste a copy of this in the chat.
 
 ---
 layout: true
@@ -37,15 +37,17 @@ The link to this slide deck
 name: Introductions
 # Introductions
 
-* Your Name
-* Job Title
+* Name - Ryan Cassidy
+* Job Title - Solutions Engineer
 * Secrets Management Experience
-* Favorite Text Editor
+  * 2 1/2 Years at Hashicorp
+  * Vault Subject Matter Expert
+  * Prior to HashiCorp I worked in Ad Tech
 
 ???
 * Use this slide to introduce yourself, give a little bit of your background story, then go around the room and have all your participants introduce themselves.
 
-* The favorite text editor question is a good ice breaker, but perhaps more importantly it gives you an immediate gauge of how technical your users are.  
+* The favorite text editor question is a good ice breaker, but perhaps more importantly it gives you an immediate gauge of how technical your users are.
 
 ---
 name: Table-of-Contents
@@ -58,10 +60,16 @@ name: Table-of-Contents
 1. Vault Authentication Methods
 1. Vault Policies
 1. Dynamic Database Secrets
+1. SSH Secrets Engine
 1. Encryption as a Service
 
 ???
-The table of contents for the workshop
+* We will start out with an overview of Hashicorp Vault
+* Vault Basics
+* Different ways to Authenticate
+* Store and Get Secrets
+* Find out what Dynamic Secrets Are?
+* In our final lab we will setup Encryption as a Service
 
 ---
 name: instruqt-tracks

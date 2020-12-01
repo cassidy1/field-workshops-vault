@@ -3,14 +3,14 @@ class: title, shelf, no-footer, fullbleed
 background-image: url(https://hashicorp.github.io/field-workshops-assets/assets/bkgs/HashiCorp-Title-bkg.jpeg)
 count: false
 
-# Chapter 5      
+# Chapter 5
 ## Vault Authentication Methods
 
 ![:scale 15%](https://hashicorp.github.io/field-workshops-assets/assets/logos/logo_vault.png)
 
 ???
 
-* Chapter 5 introduces Vault authentication methods
+* In Chapter 5 we will dive a little deeper into Vault's authentication methods
 * It focuses on the Userpass method.
 
 ---
@@ -84,8 +84,8 @@ instead of<br>
 
 ???
 
-* Talk about enabling auth methods.
-* Talk about default and custom paths
+* Enabling Authentication Methods is very similar to Secrets Engines
+* Same path options and defaults
 * Explain the examples
 
 ---
