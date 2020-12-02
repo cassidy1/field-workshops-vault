@@ -66,9 +66,9 @@ name: Vault-SSH-Engine-1
 
 ---
 name: lab-ssh-challenge-1
-# 👩‍💻 Challenge 1: Enable the SSH Engine
+# 👩‍💻 Challenge 1: Enable and configure the SSH Engine
 * In this lab challenge, you'll enable the SSH engine.
-* You'll do this in the [Vault SSH Engine](https://play.instruqt.com/hashicorp/invite/qleasfx1dszc) Instruqt track.
+* You'll do this in the [Vault SSH Engine](https://play.instruqt.com/hashicorp/invite/nxpi8w6wtgiv) Instruqt track.
 * Instructions:
   * Click the "Enable the SSH Engine" challenge of the "Vault SSH Engine" track.
   * Then click the green "Start" button.
@@ -95,7 +95,7 @@ name: lab-ssh-challenge-2
 
 ---
 name: lab-ssh-challenge-3
-# 👩‍💻 Challenge 3: Enable the SSH OTP Engine
+# 👩‍💻 Challenge 3: Enable the SSH OTP Engine and create an OTP Role
 * In this lab challenge, you'll enable the SSH OTP engine.
 * Instructions:
   * If the track does not do it for you, click the "Enable the SSH OTP Engine" challenge of the "Vault SSH Engine" track.

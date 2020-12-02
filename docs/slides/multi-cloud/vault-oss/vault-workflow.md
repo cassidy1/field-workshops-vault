@@ -39,7 +39,7 @@ name: Vault-Workflow
 name: Vault-Workflow
 
 # Application Delivery with Vault and Terraform
-.center[![:scale 60%](images/workflow3.jpeg)]
+.center[![:scale 80%](images/workflow3.jpeg)]
 
 ???
 
