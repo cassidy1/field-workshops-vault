@@ -23,7 +23,30 @@ layout: true
 ---
 name: Vault-Workflow
 
-# Application Delivery with Vault
+# Example Application Delivery Lifecycle
+.center[![:scale 60%](images/workflow1.jpeg)]
+
+???
+---
+name: Vault-Workflow
+
+# Automation possibility with Vault and Terraform
+.center[![:scale 60%](images/workflow2.png)]
+
+
+???
+---
+name: Vault-Workflow
+
+# Application Delivery with Vault and Terraform
+.center[![:scale 60%](images/workflow3.jpeg)]
+
+???
+
+---
+name: Vault-Workflow
+
+# Secure Introduction with Vault
 .center[![:scale 80%](images/vault-workflow.png)]
 
 * Automate application delivery securely with Vault
